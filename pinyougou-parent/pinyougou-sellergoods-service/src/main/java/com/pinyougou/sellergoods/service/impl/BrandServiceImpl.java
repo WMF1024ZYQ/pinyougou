@@ -1,6 +1,7 @@
 package com.pinyougou.sellergoods.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,5 +83,11 @@ public class BrandServiceImpl implements BrandService {
 		Page<TbBrand> page = (Page<TbBrand>) brandMapper.selectByExample(example);
 		//返回封装结果
 		return new PageResult(page.getTotal(), page.getResult());
+	}
+
+	@Override
+	public List<Map> selectOptionList() {
+		List<Map> selectOptionList = brandMapper.selectOptionList();
+		return selectOptionList;
 	}
 }

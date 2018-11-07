@@ -29,4 +29,5 @@ app.service('specificationOptionService',function($http){
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../specificationOption/search.do?page='+page+"&rows="+rows, searchEntity);
 	}    	
+	
 });

@@ -2,6 +2,7 @@ package com.pinyougou.manager.controller;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,9 +67,9 @@ public class SpecificationController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbSpecification specification){
+	public Result update(@RequestBody SpecificationGroup specificationGroup){
 		try {
-			specificationService.update(specification);
+			specificationService.update(specificationGroup);
 			return new Result(true, "修改成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -112,6 +113,11 @@ public class SpecificationController {
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbSpecification specification, int page, int rows  ){
 		return specificationService.findPage(specification, page, rows);		
+	}
+	
+	@RequestMapping("/findSpecList")
+	public List<Map> findSpecList(){
+		return specificationService.findSpecList();
 	}
 	
 }

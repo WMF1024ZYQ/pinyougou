@@ -29,4 +29,9 @@ app.service('specificationService',function($http){
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../specification/search.do?page='+page+"&rows="+rows, searchEntity);
 	}    	
+	
+	//多选框搜索
+	this.findSpecList=function(){
+		return $http.get("/specification/findSpecList.do");
+	}
 });
