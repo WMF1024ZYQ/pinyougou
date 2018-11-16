@@ -90,6 +90,10 @@
 	    <groupId>commons-lang</groupId>
 	    <artifactId>commons-lang</artifactId>
 	</dependency>
+	<dependency>
+	    <groupId>com.github.pagehelper</groupId>
+	    <artifactId>pagehelper</artifactId>
+	</dependency>
   </dependencies>
   <build>  
 	  <plugins>	     

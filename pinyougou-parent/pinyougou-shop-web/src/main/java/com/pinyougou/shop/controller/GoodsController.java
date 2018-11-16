@@ -3,11 +3,13 @@ package com.pinyougou.shop.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbGoods;
+import com.pinyougou.pojogroup.GoodsGroup;
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
@@ -49,9 +51,11 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/add")
-	public Result add(@RequestBody TbGoods goods){
+	public Result add(@RequestBody GoodsGroup goodsGroup){
+		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+		goodsGroup.getGoods().setSellerId(sellerId);
 		try {
-			goodsService.add(goods);
+			goodsService.add(goodsGroup);
 			return new Result(true, "增加成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -65,9 +69,17 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbGoods goods){
+	public Result update(@RequestBody GoodsGroup goodsGroup){
+		//账户校验
+		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+		//更新前信息
+		GoodsGroup goodsGroup2 = goodsService.findOne(goodsGroup.getGoods().getId());
+		if(!goodsGroup2.getGoods().getSellerId().equals(sellerId) || !goodsGroup.getGoods().getSellerId().equals(sellerId)) {
+			return new Result(false, "修改非法");
+		}
+		
 		try {
-			goodsService.update(goods);
+			goodsService.update(goodsGroup);
 			return new Result(true, "修改成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,7 +93,7 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbGoods findOne(Long id){
+	public GoodsGroup findOne(Long id){
 		return goodsService.findOne(id);		
 	}
 	
@@ -110,6 +122,8 @@ public class GoodsController {
 	 */
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
+		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+		goods.setSellerId(sellerId);
 		return goodsService.findPage(goods, page, rows);		
 	}
 	

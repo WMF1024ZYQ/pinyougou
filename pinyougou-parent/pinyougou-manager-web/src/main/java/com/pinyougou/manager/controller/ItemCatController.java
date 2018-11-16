@@ -93,8 +93,14 @@ public class ItemCatController {
 	@RequestMapping("/delete")
 	public Result delete(Long [] ids){
 		try {
-			itemCatService.delete(ids);
-			return new Result(true, "删除成功"); 
+			System.out.println("控制器进来了");
+			long errorId =itemCatService.delete(ids);
+			if (errorId==0) {
+				return new Result(true, "删除成功"); 
+			}else {
+				return new Result(false,"id"+errorId+"有下级目录删除失败");
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new Result(false, "删除失败");
@@ -111,6 +117,11 @@ public class ItemCatController {
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbItemCat itemCat, int page, int rows  ){
 		return itemCatService.findPage(itemCat, page, rows);		
+	}
+	
+	@RequestMapping("/findByParentId")
+	public List<TbItemCat> findByParentId(Long parentId){
+		return itemCatService.findByParentId(parentId);		
 	}
 	
 }

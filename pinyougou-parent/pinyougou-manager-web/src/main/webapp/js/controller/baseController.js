@@ -47,4 +47,14 @@ app.controller("baseController",function($scope){
 		
 		return value;
 	}
+	
+	$scope.serachByObjectKey=function(list,key,value){
+		for (var i = 0; i < list.length; i++) {
+			if (list[i][key]==value) {
+				return list[i];
+				alert(list[i]);
+			}
+		}
+		return null;
+	}
 });

@@ -1,16 +1,26 @@
 package com.pinyougou.sellergoods.service.impl;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.pinyougou.mapper.TbSpecificationOptionMapper;
 import com.pinyougou.mapper.TbTypeTemplateMapper;
+import com.pinyougou.pojo.TbSpecificationOption;
+import com.pinyougou.pojo.TbSpecificationOptionExample;
 import com.pinyougou.pojo.TbTypeTemplate;
 import com.pinyougou.pojo.TbTypeTemplateExample;
 import com.pinyougou.pojo.TbTypeTemplateExample.Criteria;
 import com.pinyougou.sellergoods.service.TypeTemplateService;
 
 import entity.PageResult;
+import javassist.expr.NewArray;
 
 /**
  * 服务实现层
@@ -18,11 +28,13 @@ import entity.PageResult;
  *
  */
 @Service
+@Transactional
 public class TypeTemplateServiceImpl implements TypeTemplateService {
 
 	@Autowired
 	private TbTypeTemplateMapper typeTemplateMapper;
-	
+	@Autowired
+	private TbSpecificationOptionMapper specificationOptionMapper;
 	/**
 	 * 查询全部
 	 */
@@ -105,5 +117,25 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
+		
+		/**
+		 * 查询模板规格
+		 */
+		@Override
+		public List<Map> findSpecList(Long id) {
+			//查询所有规格列表
+			TbTypeTemplate template = typeTemplateMapper.selectByPrimaryKey(id);
+			List<Map> specList = JSON.parseArray(template.getSpecIds(),Map.class);
+			//遍历规格列表
+			for (Map spec : specList) {
+				TbSpecificationOptionExample example = new TbSpecificationOptionExample();
+				com.pinyougou.pojo.TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
+				criteria.andSpecIdEqualTo(new Long((Integer)spec.get("id")));
+				//根据规格的id查询规格选项
+				List<TbSpecificationOption> options = specificationOptionMapper.selectByExample(example);
+				spec.put("options", options);
+			}
+			return specList;
+		}
 	
 }
