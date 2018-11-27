@@ -1,5 +1,6 @@
 package com.pinyougou.sellergoods.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,6 @@ public class GoodsServiceImpl implements GoodsService {
 		
 		TbGoodsDesc goodsDescs = goodsGroup.getGoodsDescs();
 		goodsDescs.setGoodsId(goods.getId());
-		int x= 1/0;
 		goodsDescMapper.insert(goodsDescs);
 		
 		addItem(goodsGroup, goods, goodsDescs);
@@ -194,9 +194,7 @@ public class GoodsServiceImpl implements GoodsService {
 			if (goods.getIsEnableSpec() != null && goods.getIsEnableSpec().length() > 0) {
 				criteria.andIsEnableSpecLike("%" + goods.getIsEnableSpec() + "%");
 			}
-			if (goods.getIsDelete() != null && goods.getIsDelete().length() > 0) {
-				criteria.andIsDeleteLike("%" + goods.getIsDelete() + "%");
-			}
+			criteria.andIsDeleteIsNull();
 
 		}
 
@@ -241,5 +239,14 @@ public class GoodsServiceImpl implements GoodsService {
 			goods.setAuditStatus(status);
 			goodsMapper.updateByPrimaryKey(goods);
 		}
+	}
+
+	@Override
+	public List<TbItem> findItemListByGoodsIdandStatus(Long[] ids, String status) {
+		TbItemExample example=new TbItemExample();
+		com.pinyougou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
+		criteria.andGoodsIdIn(Arrays.asList(ids));
+		criteria.andStatusEqualTo(status);
+		return itemMapper.selectByExample(example);
 	}
 }
